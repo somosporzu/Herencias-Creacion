@@ -78,6 +78,7 @@ const App: React.FC = () => {
         <main className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
           <TraitLibrary allTraits={ALL_TRAITS} onAddTrait={addTrait} />
           <HerenciaBuilder
+            herencia={herencia}
             selectedTraits={selectedTraits}
             totalPH={totalPH}
             onRemoveTrait={removeTrait}

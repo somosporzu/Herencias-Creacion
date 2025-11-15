@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
-import { type Trait } from '../types';
+import { type Trait, type Herencia } from '../types';
 
 interface HerenciaBuilderProps {
+  herencia: Omit<Herencia, 'traits'>;
   selectedTraits: Trait[];
   totalPH: number;
   onRemoveTrait: (traitId: string) => void;
@@ -9,6 +10,7 @@ interface HerenciaBuilderProps {
 }
 
 const HerenciaBuilder: React.FC<HerenciaBuilderProps> = ({
+  herencia,
   selectedTraits,
   totalPH,
   onRemoveTrait,
@@ -24,6 +26,40 @@ const HerenciaBuilder: React.FC<HerenciaBuilderProps> = ({
             isValid: isBalanced && isTraitCountValid && hasDisadvantage,
         };
     }, [selectedTraits, totalPH]);
+
+    const handleExport = () => {
+        if (!herencia.name || selectedTraits.length === 0) {
+          alert("Por favor, pon un nombre a tu herencia y añade al menos un rasgo antes de exportar.");
+          return;
+        }
+    
+        let content = `==============================\n`;
+        content += ` Herencia: ${herencia.name}\n`;
+        content += `==============================\n\n`;
+    
+        content += `Naturaleza: ${herencia.naturaleza || 'No especificada'}\n`;
+        content += `Descripción: ${herencia.description || 'No especificada'}\n\n`;
+        
+        content += `--- Rasgos ---\n`;
+        selectedTraits.forEach(trait => {
+            const phSign = trait.ph > 0 ? '+' : '';
+            content += `- ${trait.name} (${phSign}${trait.ph} PH): ${trait.description}\n`;
+        });
+        content += `\n`;
+    
+        content += `--- Balance Final ---\n`;
+        content += `Puntos de Herencia (PH) Totales: ${totalPH}\n`;
+        content += `Número de Rasgos: ${selectedTraits.length}\n`;
+    
+        const element = document.createElement("a");
+        const file = new Blob([content], {type: 'text/plain;charset=utf-8'});
+        element.href = URL.createObjectURL(file);
+        const fileName = herencia.name.replace(/ /g, '_').toLowerCase();
+        element.download = `herencia_${fileName || 'sin_nombre'}.txt`;
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+    };
 
     const phColor = totalPH === 0 ? 'text-green-400' : 'text-red-400';
 
@@ -72,6 +108,13 @@ const HerenciaBuilder: React.FC<HerenciaBuilderProps> = ({
         </div>
 
       <div className="mt-6 flex flex-col sm:flex-row gap-4">
+        <button
+            onClick={handleExport}
+            disabled={!herencia.name || selectedTraits.length === 0}
+            className="w-full bg-sky-600 text-white font-bold py-3 px-4 rounded-md hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 disabled:bg-gray-500 disabled:cursor-not-allowed"
+        >
+            Exportar como Texto
+        </button>
         <button
             onClick={onReset}
             className="w-full bg-red-600 text-white font-bold py-3 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
