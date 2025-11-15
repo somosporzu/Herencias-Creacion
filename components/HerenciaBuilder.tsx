@@ -1,0 +1,101 @@
+import React, { useMemo } from 'react';
+import { type Trait } from '../types';
+
+interface HerenciaBuilderProps {
+  selectedTraits: Trait[];
+  totalPH: number;
+  onRemoveTrait: (traitId: string) => void;
+  onGenerateDescription: () => void;
+  isGenerating: boolean;
+  canGenerate: boolean;
+  onReset: () => void;
+}
+
+const HerenciaBuilder: React.FC<HerenciaBuilderProps> = ({
+  selectedTraits,
+  totalPH,
+  onRemoveTrait,
+  onGenerateDescription,
+  isGenerating,
+  canGenerate,
+  onReset
+}) => {
+    const validation = useMemo(() => {
+        const hasDisadvantage = selectedTraits.some(t => t.ph < 0);
+        const traitCount = selectedTraits.length;
+        const isBalanced = totalPH === 0;
+        const isTraitCountValid = traitCount >= 2 && traitCount <= 5;
+        
+        return {
+            isValid: isBalanced && isTraitCountValid && hasDisadvantage,
+        };
+    }, [selectedTraits, totalPH]);
+
+    const phColor = totalPH === 0 ? 'text-green-400' : 'text-red-400';
+
+  return (
+    <section className="bg-gray-800 shadow-2xl rounded-lg p-6 flex flex-col">
+      <div className="flex justify-between items-center border-b-2 border-gray-700 pb-2 mb-4">
+        <h2 className="text-2xl font-bold text-amber-400">Tu Herencia</h2>
+        <div className="text-right">
+            <span className="text-sm text-gray-400 block">Balance Actual</span>
+            <span className={`text-3xl font-black ${phColor}`}>{totalPH} PH</span>
+        </div>
+      </div>
+      
+      <div className="flex-grow space-y-2 mb-4 overflow-y-auto max-h-[40vh] pr-2">
+        {selectedTraits.length === 0 ? (
+          <p className="text-gray-500 italic text-center py-8">Añade rasgos desde la biblioteca para empezar a construir tu Herencia.</p>
+        ) : (
+          selectedTraits.map((trait) => (
+            <div key={trait.id} className="bg-gray-700 p-3 rounded-md flex justify-between items-center">
+              <div>
+                <p className="font-semibold text-amber-300">{trait.name}</p>
+                <p className="text-xs text-gray-400">{trait.description}</p>
+              </div>
+              <div className="flex items-center space-x-4">
+                 <span className={`font-bold text-lg ${trait.ph > 0 ? 'text-green-400' : 'text-red-400'}`}>{trait.ph > 0 ? '+' : ''}{trait.ph}</span>
+                 <button onClick={() => onRemoveTrait(trait.id)} className="text-red-500 hover:text-red-400 font-bold text-2xl" aria-label={`Quitar rasgo ${trait.name}`}>&times;</button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+      
+        <div className="bg-gray-900/50 p-3 rounded-lg mt-auto">
+            <h4 className="font-bold mb-2 text-gray-300">Reglas de Construcción</h4>
+            <ul className="text-sm space-y-1">
+                <li className={`transition-colors ${totalPH === 0 ? 'text-green-400' : 'text-red-400'}`}>
+                    <strong>Balance de Puntos:</strong> El total debe ser 0 PH. (Actual: {totalPH})
+                </li>
+                <li className={`transition-colors ${selectedTraits.length >= 2 && selectedTraits.length <= 5 ? 'text-green-400' : 'text-red-400'}`}>
+                    <strong>Número de Rasgos:</strong> Entre 2 y 5. (Actual: {selectedTraits.length})
+                </li>
+                <li className={`transition-colors ${selectedTraits.some(t => t.ph < 0) ? 'text-green-400' : 'text-red-400'}`}>
+                    <strong>Desventaja Obligatoria:</strong> Al menos una.
+                </li>
+            </ul>
+        </div>
+
+      <div className="mt-6 flex flex-col sm:flex-row gap-4">
+        <button
+            onClick={onGenerateDescription}
+            disabled={!validation.isValid || isGenerating || !canGenerate}
+            className="flex-1 bg-green-600 text-white font-bold py-3 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:bg-gray-500 disabled:cursor-not-allowed"
+        >
+            {isGenerating ? 'Generando...' : 'Generar Descripción con IA'}
+        </button>
+        <button
+            onClick={onReset}
+            className="bg-red-600 text-white font-bold py-3 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+        >
+            Reiniciar
+        </button>
+      </div>
+       {!canGenerate && <p className="text-xs text-center text-yellow-400 mt-2">Por favor, introduce un Nombre y una Naturaleza para la Herencia antes de generar.</p>}
+       {!validation.isValid && selectedTraits.length > 0 && <p className="text-xs text-center text-red-400 mt-2">La Herencia no cumple las reglas de construcción.</p>}
+    </section>
+  );
+};
+
+export default HerenciaBuilder;
