@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { type Trait, type Herencia } from './types';
-import { ALL_TRAITS } from './constants';
+import { ALL_TRAITS, NATURALEZAS } from './constants';
 import TraitLibrary from './components/TraitLibrary';
 import HerenciaBuilder from './components/HerenciaBuilder';
 import Header from './components/Header';
@@ -30,7 +30,7 @@ const App: React.FC = () => {
     setSelectedTraits((prev) => prev.filter((trait) => trait.id !== traitId));
   }, []);
   
-  const handleHerenciaChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleHerenciaChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setHerencia(prev => ({ ...prev, [name]: value }));
   };
@@ -56,14 +56,17 @@ const App: React.FC = () => {
               onChange={handleHerenciaChange}
               className="bg-gray-700 border border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-amber-500 focus:outline-none"
             />
-            <input
-              type="text"
+            <select
               name="naturaleza"
-              placeholder="Naturaleza Gratuita (ej: Astuto, Robusto)"
               value={herencia.naturaleza}
               onChange={handleHerenciaChange}
               className="bg-gray-700 border border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-amber-500 focus:outline-none"
-            />
+            >
+              <option value="">Elige una Naturaleza Gratuita</option>
+              {NATURALEZAS.map(nat => (
+                <option key={nat} value={nat}>{nat}</option>
+              ))}
+            </select>
             <textarea
               name="description"
               placeholder="Breve descripción o concepto de la Herencia."

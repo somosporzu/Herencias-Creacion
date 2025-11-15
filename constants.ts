@@ -1,5 +1,28 @@
 import { type Trait } from './types';
 
+export const NATURALEZAS: string[] = [
+    "Apasionadamente",
+    "Astutamente",
+    "Brutalmente",
+    "Caóticamente",
+    "Carismáticamente",
+    "Cautelosamente",
+    "Con Optimismo",
+    "Curiosamente",
+    "Despiadadamente",
+    "Elegantemente",
+    "Fríamente",
+    "Impulsivamente",
+    "Inestablemente",
+    "Metódicamente",
+    "Rápidamente",
+    "Silenciosamente",
+    "Siniestramente",
+    "Tenazmente",
+    "Torpemente",
+    "Valientemente",
+];
+
 const TRAITS_PLUS_1: Trait[] = [
     { id: 'vision-penumbra', name: 'Visión en la Penumbra', description: 'Puedes ver con poca luz.', ph: 1 },
     { id: 'bono-habilidad-menor', name: 'Bono de Habilidad Menor', description: '+1 a una tirada muy específica (ej: trepar, nadar).', ph: 1 },

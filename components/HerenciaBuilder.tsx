@@ -24,6 +24,9 @@ const HerenciaBuilder: React.FC<HerenciaBuilderProps> = ({
         
         return {
             isValid: isBalanced && isTraitCountValid && hasDisadvantage,
+            hasDisadvantage,
+            isTraitCountValid,
+            isBalanced
         };
     }, [selectedTraits, totalPH]);
 
@@ -47,10 +50,17 @@ const HerenciaBuilder: React.FC<HerenciaBuilderProps> = ({
         });
         content += `\n`;
     
-        content += `--- Balance Final ---\n`;
-        content += `Puntos de Herencia (PH) Totales: ${totalPH}\n`;
-        content += `Número de Rasgos: ${selectedTraits.length}\n`;
-    
+        content += `--- Resumen y Reglas ---\n`;
+        content += `Puntos de Herencia (PH) Totales: ${totalPH} (Objetivo: 0)\n`;
+        content += `Número de Rasgos: ${selectedTraits.length} (Objetivo: 2-5)\n\n`;
+        
+        content += `Estado de Validación:\n`;
+        content += `- Balance de Puntos: ${validation.isBalanced ? 'CUMPLIDO' : 'NO CUMPLIDO'}\n`;
+        content += `- Número de Rasgos: ${validation.isTraitCountValid ? 'CUMPLIDO' : 'NO CUMPLIDO'}\n`;
+        content += `- Desventaja Obligatoria: ${validation.hasDisadvantage ? 'CUMPLIDO' : 'NO CUMPLIDO'}\n\n`;
+
+        content += `>> Herencia Válida para Jugar: ${validation.isValid ? 'SÍ' : 'NO'} <<\n`;
+
         const element = document.createElement("a");
         const file = new Blob([content], {type: 'text/plain;charset=utf-8'});
         element.href = URL.createObjectURL(file);
@@ -95,13 +105,13 @@ const HerenciaBuilder: React.FC<HerenciaBuilderProps> = ({
         <div className="bg-gray-900/50 p-3 rounded-lg mt-auto">
             <h4 className="font-bold mb-2 text-gray-300">Reglas de Construcción</h4>
             <ul className="text-sm space-y-1">
-                <li className={`transition-colors ${totalPH === 0 ? 'text-green-400' : 'text-red-400'}`}>
+                <li className={`transition-colors ${validation.isBalanced ? 'text-green-400' : 'text-red-400'}`}>
                     <strong>Balance de Puntos:</strong> El total debe ser 0 PH. (Actual: {totalPH})
                 </li>
-                <li className={`transition-colors ${selectedTraits.length >= 2 && selectedTraits.length <= 5 ? 'text-green-400' : 'text-red-400'}`}>
+                <li className={`transition-colors ${validation.isTraitCountValid ? 'text-green-400' : 'text-red-400'}`}>
                     <strong>Número de Rasgos:</strong> Entre 2 y 5. (Actual: {selectedTraits.length})
                 </li>
-                <li className={`transition-colors ${selectedTraits.some(t => t.ph < 0) ? 'text-green-400' : 'text-red-400'}`}>
+                <li className={`transition-colors ${validation.hasDisadvantage ? 'text-green-400' : 'text-red-400'}`}>
                     <strong>Desventaja Obligatoria:</strong> Al menos una.
                 </li>
             </ul>
