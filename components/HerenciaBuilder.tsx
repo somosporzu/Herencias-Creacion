@@ -5,9 +5,6 @@ interface HerenciaBuilderProps {
   selectedTraits: Trait[];
   totalPH: number;
   onRemoveTrait: (traitId: string) => void;
-  onGenerateDescription: () => void;
-  isGenerating: boolean;
-  canGenerate: boolean;
   onReset: () => void;
 }
 
@@ -15,9 +12,6 @@ const HerenciaBuilder: React.FC<HerenciaBuilderProps> = ({
   selectedTraits,
   totalPH,
   onRemoveTrait,
-  onGenerateDescription,
-  isGenerating,
-  canGenerate,
   onReset
 }) => {
     const validation = useMemo(() => {
@@ -79,20 +73,12 @@ const HerenciaBuilder: React.FC<HerenciaBuilderProps> = ({
 
       <div className="mt-6 flex flex-col sm:flex-row gap-4">
         <button
-            onClick={onGenerateDescription}
-            disabled={!validation.isValid || isGenerating || !canGenerate}
-            className="flex-1 bg-green-600 text-white font-bold py-3 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:bg-gray-500 disabled:cursor-not-allowed"
-        >
-            {isGenerating ? 'Generando...' : 'Generar Descripción con IA'}
-        </button>
-        <button
             onClick={onReset}
-            className="bg-red-600 text-white font-bold py-3 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+            className="w-full bg-red-600 text-white font-bold py-3 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
         >
             Reiniciar
         </button>
       </div>
-       {!canGenerate && <p className="text-xs text-center text-yellow-400 mt-2">Por favor, introduce un Nombre y una Naturaleza para la Herencia antes de generar.</p>}
        {!validation.isValid && selectedTraits.length > 0 && <p className="text-xs text-center text-red-400 mt-2">La Herencia no cumple las reglas de construcción.</p>}
     </section>
   );

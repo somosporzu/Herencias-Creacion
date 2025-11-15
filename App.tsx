@@ -4,8 +4,6 @@ import { ALL_TRAITS } from './constants';
 import TraitLibrary from './components/TraitLibrary';
 import HerenciaBuilder from './components/HerenciaBuilder';
 import Header from './components/Header';
-import GeneratedDescription from './components/GeneratedDescription';
-import { generateHerenciaDescription } from './services/geminiService';
 
 const App: React.FC = () => {
   const [herencia, setHerencia] = useState<Omit<Herencia, 'traits'>>({
@@ -14,9 +12,6 @@ const App: React.FC = () => {
     naturaleza: '',
   });
   const [selectedTraits, setSelectedTraits] = useState<Trait[]>([]);
-  const [generatedDesc, setGeneratedDesc] = useState<string>('');
-  const [isGenerating, setIsGenerating] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
 
   const totalPH = useMemo(() => {
     return selectedTraits.reduce((sum, trait) => sum + trait.ph, 0);
@@ -40,27 +35,9 @@ const App: React.FC = () => {
     setHerencia(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleGenerateDescription = async () => {
-    setIsGenerating(true);
-    setError(null);
-    setGeneratedDesc('');
-    try {
-      const fullHerencia: Herencia = { ...herencia, traits: selectedTraits };
-      const description = await generateHerenciaDescription(fullHerencia);
-      setGeneratedDesc(description);
-    } catch (err) {
-      setError('Failed to generate description. Please check your API key and try again.');
-      console.error(err);
-    } finally {
-      setIsGenerating(false);
-    }
-  };
-
   const resetBuilder = () => {
     setHerencia({ name: '', description: '', naturaleza: '' });
     setSelectedTraits([]);
-    setGeneratedDesc('');
-    setError(null);
   };
 
   return (
@@ -104,18 +81,10 @@ const App: React.FC = () => {
             selectedTraits={selectedTraits}
             totalPH={totalPH}
             onRemoveTrait={removeTrait}
-            onGenerateDescription={handleGenerateDescription}
-            isGenerating={isGenerating}
-            canGenerate={!!herencia.name && !!herencia.naturaleza}
             onReset={resetBuilder}
           />
         </main>
         
-        <GeneratedDescription 
-            description={generatedDesc} 
-            error={error} 
-            isGenerating={isGenerating}
-        />
       </div>
     </div>
   );
