@@ -79,7 +79,8 @@ const TraitLibrary: React.FC<TraitLibraryProps> = ({ allTraits, onAddTrait, sele
         if(!customTrait.name || !customTrait.description) return;
         const newTrait: Trait = {
             ...customTrait,
-            id: `custom-${Date.now()}`
+            id: `custom-${Date.now()}`,
+            isCustom: true
         };
         onAddTrait(newTrait);
         setCustomTrait({ name: '', description: '', ph: 1 });

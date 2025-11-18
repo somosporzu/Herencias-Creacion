@@ -4,6 +4,7 @@ export interface Trait {
   name: string;
   description: string;
   ph: number;
+  isCustom?: boolean;
 }
 
 export interface Herencia {

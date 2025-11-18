@@ -57,6 +57,7 @@ const TRAITS_MINUS_1: Trait[] = [
     { id: 'sin-sentido-orientacion', name: 'Sin Sentido de la Orientación', description: 'Tienes desventaja en las tiradas para no perderte.', ph: -1 },
     { id: 'curiosidad-morbida', name: 'Curiosidad Mórbida', description: 'Debes superar una tirada de Aura (ND 9) para no investigar algo obviamente peligroso.', ph: -1 },
     { id: 'sabor-desagradable', name: 'Sabor Desagradable', description: 'Las bestias prefieren atacarte a ti antes que a otros.', ph: -1 },
+    { id: 'condicionado', name: 'Condicionado', description: 'Una de tus ventajas solo funciona en una situación o momento específico (ej: "solo de noche", "solo contra orcos").', ph: -1 },
 ];
 
 const TRAITS_PLUS_2: Trait[] = [
@@ -75,6 +76,7 @@ const TRAITS_PLUS_2: Trait[] = [
     { id: 'afinidad-elemental-menor', name: 'Afinidad Elemental Menor', description: 'Puedes realizar pequeños trucos con un elemento (encender una vela, enfriar una bebida).', ph: 2 },
     { id: 'resistencia-magica', name: 'Resistencia Mágica', description: 'Tienes ventaja en las salvaciones contra los efectos de Técnicas.', ph: 2 },
     { id: 'paso-ligero-avanzado', name: 'Paso Ligero Avanzado', description: 'Puedes moverte sobre superficies como nieve profunda o barro sin penalización.', ph: 2 },
+    { id: 'resistencia-aumentada', name: 'Resistencia Aumentada', description: '+5 a tu Resistencia máxima.', ph: 2 },
 ];
 
 const TRAITS_MINUS_2: Trait[] = [
@@ -94,7 +96,6 @@ const TRAITS_PLUS_3: Trait[] = [
     { id: 'aliento-elemental', name: 'Aliento Elemental', description: '1/día, inflige 1d6 de daño elemental en un área pequeña (Salvación de Destreza ND 12 para mitad de daño).', ph: 3 },
     { id: 'regeneracion-leve', name: 'Regeneración Leve', description: 'Recuperas 3 de Resistencia al final de cada combate.', ph: 3 },
     { id: 'vuelo-limitado', name: 'Vuelo Limitado', description: 'Puedes planear o volar cortas distancias (tu movimiento de vuelo es igual a tu velocidad terrestre, pero caes si terminas tu turno en el aire).', ph: 3 },
-    { id: 'resistencia-aumentada', name: 'Resistencia Aumentada', description: '+3 a tu Resistencia máxima.', ph: 3 },
     { id: 'sentido-ciego', name: 'Sentido Ciego', description: 'Puedes "ver" sin usar los ojos en un radio de 5m. Eres inmune a la ceguera.', ph: 3 },
     { id: 'inmunidad-enfermedades', name: 'Inmunidad a Enfermedades', description: 'Eres inmune a todas las enfermedades no mágicas.', ph: 3 },
     { id: 'afinidad-con-fuerza', name: 'Afinidad con una Fuerza', description: 'El coste en PX para comprar técnicas de una Fuerza específica se reduce en un 10%.', ph: 3 },

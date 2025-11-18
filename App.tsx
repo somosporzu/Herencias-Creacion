@@ -4,8 +4,6 @@ import { ALL_TRAITS, NATURALEZAS } from './constants';
 import TraitLibrary from './components/TraitLibrary';
 import HerenciaBuilder from './components/HerenciaBuilder';
 import Header from './components/Header';
-import GeneratedDescription from './components/GeneratedDescription';
-import { generateHerenciaDescription } from './services/geminiService';
 
 const STORAGE_KEY = 'herenciaCreatorData';
 
@@ -35,11 +33,6 @@ const App: React.FC = () => {
   const [herencia, setHerencia] = useState<Omit<Herencia, 'traits'>>(initialHerencia);
   const [selectedTraits, setSelectedTraits] = useState<Trait[]>(initialTraits);
 
-  // State for AI generation
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedDescription, setGeneratedDescription] = useState('');
-  const [generationError, setGenerationError] = useState<string | null>(null);
-
   // Auto-save to Local Storage on change
   useEffect(() => {
     const dataToSave = {
@@ -55,7 +48,7 @@ const App: React.FC = () => {
 
   const addTrait = useCallback((trait: Trait) => {
     setSelectedTraits((prev) => {
-        if(prev.some(t => t.id === trait.id) && !trait.id.startsWith('custom-')) {
+        if(prev.some(t => t.id === trait.id) && !trait.isCustom) {
             return prev;
         }
         return [...prev, trait];
@@ -74,42 +67,13 @@ const App: React.FC = () => {
   const resetBuilder = () => {
     setHerencia({ name: '', description: '', naturaleza: '' });
     setSelectedTraits([]);
-    setGeneratedDescription('');
-    setGenerationError(null);
   };
   
   const loadFromStorage = useCallback(() => {
     const { initialHerencia, initialTraits } = getInitialState();
     setHerencia(initialHerencia);
     setSelectedTraits(initialTraits);
-    setGeneratedDescription('');
-    setGenerationError(null);
   }, []);
-
-  const handleGenerateDescription = useCallback(async () => {
-    setIsGenerating(true);
-    setGeneratedDescription('');
-    setGenerationError(null);
-
-    const fullHerencia: Herencia = {
-        ...herencia,
-        traits: selectedTraits,
-    };
-
-    try {
-        const description = await generateHerenciaDescription(fullHerencia);
-        setGeneratedDescription(description);
-    } catch (error) {
-        if (error instanceof Error) {
-            setGenerationError(error.message);
-        } else {
-            setGenerationError("Ocurrió un error desconocido al contactar con la IA.");
-        }
-    } finally {
-        setIsGenerating(false);
-    }
-  }, [herencia, selectedTraits]);
-
 
   return (
     <div className="min-h-screen bg-gray-900 font-sans p-4 sm:p-6 lg:p-8">
@@ -157,19 +121,9 @@ const App: React.FC = () => {
             totalPH={totalPH}
             onRemoveTrait={removeTrait}
             onReset={resetBuilder}
-            onGenerateDescription={handleGenerateDescription}
             onLoadFromStorage={loadFromStorage}
-            isGenerating={isGenerating}
-            generatedDescription={generatedDescription}
           />
         </main>
-        
-        <GeneratedDescription 
-            description={generatedDescription}
-            error={generationError}
-            isGenerating={isGenerating}
-        />
-        
       </div>
     </div>
   );

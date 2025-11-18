@@ -7,10 +7,7 @@ interface HerenciaBuilderProps {
   totalPH: number;
   onRemoveTrait: (traitId: string) => void;
   onReset: () => void;
-  onGenerateDescription: () => void;
   onLoadFromStorage: () => void;
-  isGenerating: boolean;
-  generatedDescription: string;
 }
 
 const HerenciaBuilder: React.FC<HerenciaBuilderProps> = ({
@@ -19,16 +16,13 @@ const HerenciaBuilder: React.FC<HerenciaBuilderProps> = ({
   totalPH,
   onRemoveTrait,
   onReset,
-  onGenerateDescription,
   onLoadFromStorage,
-  isGenerating,
-  generatedDescription,
 }) => {
     const validation = useMemo(() => {
         const hasDisadvantage = selectedTraits.some(t => t.ph < 0);
         const traitCount = selectedTraits.length;
         const isBalanced = totalPH === 0;
-        const isTraitCountValid = traitCount >= 2 && traitCount <= 5;
+        const isTraitCountValid = traitCount >= 2 && traitCount <= 7;
         
         return {
             isValid: isBalanced && isTraitCountValid && hasDisadvantage && !!herencia.name && !!herencia.naturaleza,
@@ -39,8 +33,8 @@ const HerenciaBuilder: React.FC<HerenciaBuilderProps> = ({
     }, [selectedTraits, totalPH, herencia.name, herencia.naturaleza]);
 
     const handleExport = () => {
-        if (!herencia.name || selectedTraits.length === 0) {
-          alert("Por favor, pon un nombre a tu herencia y añade al menos un rasgo antes de exportar.");
+        if (!validation.isValid) {
+          alert("La Herencia no cumple con todas las reglas para ser exportada.");
           return;
         }
     
@@ -60,7 +54,7 @@ const HerenciaBuilder: React.FC<HerenciaBuilderProps> = ({
     
         content += `--- Resumen y Reglas ---\n`;
         content += `Puntos de Herencia (PH) Totales: ${totalPH} (Objetivo: 0)\n`;
-        content += `Número de Rasgos: ${selectedTraits.length} (Objetivo: 2-5)\n\n`;
+        content += `Número de Rasgos: ${selectedTraits.length} (Objetivo: 2-7)\n\n`;
         
         content += `Estado de Validación:\n`;
         content += `- Balance de Puntos: ${validation.isBalanced ? 'CUMPLIDO' : 'NO CUMPLIDO'}\n`;
@@ -68,17 +62,6 @@ const HerenciaBuilder: React.FC<HerenciaBuilderProps> = ({
         content += `- Desventaja Obligatoria: ${validation.hasDisadvantage ? 'CUMPLIDO' : 'NO CUMPLIDO'}\n\n`;
 
         content += `>> Herencia Válida para Jugar: ${validation.isValid ? 'SÍ' : 'NO'} <<\n`;
-
-        if(generatedDescription) {
-            content += `\n\n==============================\n`;
-            content += ` DESCRIPCIÓN DETALLADA (IA)\n`;
-            content += `==============================\n\n`;
-            const cleanDescription = generatedDescription
-                .replace(/###\s?/g, '')
-                .replace(/##\s?/g, '')
-                .replace(/\*\*/g, '');
-            content += cleanDescription;
-        }
 
         const element = document.createElement("a");
         const file = new Blob([content], {type: 'text/plain;charset=utf-8'});
@@ -128,7 +111,7 @@ const HerenciaBuilder: React.FC<HerenciaBuilderProps> = ({
                     <strong>Balance de Puntos:</strong> El total debe ser 0 PH. (Actual: {totalPH})
                 </li>
                 <li className={`transition-colors ${validation.isTraitCountValid ? 'text-green-400' : 'text-red-400'}`}>
-                    <strong>Número de Rasgos:</strong> Entre 2 y 5. (Actual: {selectedTraits.length})
+                    <strong>Número de Rasgos:</strong> Entre 2 y 7. (Actual: {selectedTraits.length})
                 </li>
                 <li className={`transition-colors ${validation.hasDisadvantage ? 'text-green-400' : 'text-red-400'}`}>
                     <strong>Desventaja Obligatoria:</strong> Al menos una.
@@ -141,22 +124,15 @@ const HerenciaBuilder: React.FC<HerenciaBuilderProps> = ({
 
       <div className="mt-6 space-y-4">
         <button
-          onClick={onGenerateDescription}
-          disabled={!validation.isValid || isGenerating}
-          className="w-full bg-amber-600 text-white font-bold py-3 px-4 rounded-md hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 disabled:bg-gray-600 disabled:cursor-not-allowed transition-all text-lg"
-          aria-label={!validation.isValid ? "Completa todos los requisitos de construcción para generar con IA" : "Generar descripción con IA"}
-          title={!validation.isValid ? "Completa todos los requisitos de construcción para generar con IA" : "Generar descripción con IA"}
+            onClick={handleExport}
+            disabled={!validation.isValid}
+            className="w-full bg-sky-600 text-white font-bold py-3 px-4 rounded-md hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 disabled:bg-gray-600 disabled:cursor-not-allowed transition-all text-lg"
+            aria-label={!validation.isValid ? "Completa todos los requisitos para exportar" : "Exportar como archivo de texto"}
+            title={!validation.isValid ? "Completa todos los requisitos para exportar" : "Exportar como archivo de texto"}
         >
-          {isGenerating ? 'Forjando Historia...' : 'Generar Descripción con IA'}
+            Exportar como Texto
         </button>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <button
-                onClick={handleExport}
-                disabled={!herencia.name || selectedTraits.length === 0}
-                className="w-full bg-sky-600 text-white font-bold py-2 px-4 rounded-md hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 disabled:bg-gray-500 disabled:cursor-not-allowed"
-            >
-                Exportar
-            </button>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <button
                 onClick={onLoadFromStorage}
                 className="w-full bg-purple-600 text-white font-bold py-2 px-4 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
