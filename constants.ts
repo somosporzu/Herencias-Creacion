@@ -24,7 +24,6 @@ export const NATURALEZAS: string[] = [
 ];
 
 const TRAITS_PLUS_1: Trait[] = [
-    { id: 'vision-penumbra', name: 'Visión en la Penumbra', description: 'Puedes ver con poca luz.', ph: 1 },
     { id: 'bono-habilidad-menor', name: 'Bono de Habilidad Menor', description: '+1 a una tirada muy específica (ej: trepar, nadar).', ph: 1 },
     { id: 'arma-natural-debil', name: 'Arma Natural Débil', description: 'Garras o colmillos que infligen 1d6-3 de daño.', ph: 1 },
     { id: 'resistencia-climatica', name: 'Resistencia Climática', description: 'Resistes mejor un clima específico (frío o calor).', ph: 1 },
@@ -38,16 +37,15 @@ const TRAITS_PLUS_1: Trait[] = [
     { id: 'pies-ligeros', name: 'Pies Ligeros', description: 'Ignoras el terreno difícil causado por vegetación o suelo irregular.', ph: 1 },
     { id: 'voz-resonante', name: 'Voz Resonante', description: 'Tienes ventaja en tiradas para hacerte oír a distancia o en multitudes.', ph: 1 },
     { id: 'duro-de-cabeza', name: 'Duro de Cabeza', description: '+1 a las tiradas para resistir la intimidación.', ph: 1 },
-    { id: 'piel-gruesa-menor', name: 'Piel Gruesa Menor', description: 'Ignoras 1 punto de daño de fuentes no metálicas (garras, puños, etc.).', ph: 1 },
     { id: 'metabolismo-eficiente', name: 'Metabolismo Eficiente', description: 'Solo necesitas la mitad de comida y agua para no sufrir fatiga.', ph: 1, category: 'Físico' },
     { id: 'fisiologia-anfibia', name: 'Fisiología Anfibia', description: 'Puedes respirar tanto en aire como en agua.', ph: 1, category: 'Físico' },
     { id: 'bioluminiscencia', name: 'Bioluminiscencia', description: 'Puedes emitir luz tenue desde tu cuerpo a voluntad. Tienes desventaja en sigilo en la oscuridad.', ph: 1, category: 'Utilidad' },
+    { id: 'piel-piedra-menor', name: 'Piel de Piedra Menor', description: 'Ignoras 1 punto de daño de un tipo específico (ej: Contundente, Cortante, Fuego).', ph: 1, category: 'Físico' },
 ];
 
 const TRAITS_MINUS_1: Trait[] = [
     { id: 'vulnerabilidad-climatica', name: 'Vulnerabilidad Climática', description: 'Fatiga más rápida en un clima específico (calor o frío).', ph: -1 },
     { id: 'necesidad-fisica-leve', name: 'Necesidad Física Leve', description: 'Requiere más agua, comida o descanso de lo normal.', ph: -1 },
-    { id: 'desventaja-social-menor', name: 'Desventaja Social Menor', description: 'Un aspecto que genera desconfianza (-1 a las primeras impresiones).', ph: -1 },
     { id: 'miedo-instintivo', name: 'Miedo Instintivo', description: 'Debes superar una tirada de Aura para no asustarte ante un animal o fenómeno común.', ph: -1 },
     { id: 'torpeza-especifica', name: 'Torpeza Específica', description: '-1 a todas las tiradas de una habilidad específica (ej: Sigilo).', ph: -1 },
     { id: 'olor-distintivo', name: 'Olor Distintivo', description: 'Tienes desventaja en sigilo contra criaturas con buen olfato.', ph: -1 },
@@ -71,19 +69,21 @@ const TRAITS_PLUS_2: Trait[] = [
     { id: 'arma-natural-potente', name: 'Arma Natural Potente', description: 'Garras o cuernos que infligen 1d6 de daño.', ph: 2, category: 'Combate' },
     { id: 'sentidos-agudos', name: 'Sentidos Agudos', description: 'Ventaja en todas las tiradas de un sentido (oído, olfato).', ph: 2, category: 'Mental' },
     { id: 'movimiento-especial', name: 'Movimiento Especial', description: 'Ganas una velocidad de trepar o nadar igual a tu velocidad terrestre.', ph: 2, category: 'Movimiento' },
-    { id: 'piel-de-piedra', name: 'Piel de Piedra', description: 'Ignoras 1 punto de daño de cualquier fuente.', ph: 2, category: 'Físico' },
     { id: 'resistencia-a-venenos', name: 'Resistencia a Venenos', description: 'Tienes ventaja en las Tiradas de Salvación contra venenos.', ph: 2, category: 'Físico' },
     { id: 'acrobata-nato', name: 'Acróbata Nato', description: 'Tienes ventaja en las tiradas de acrobacias y equilibrio.', ph: 2, category: 'Movimiento' },
     { id: 'memoria-fotografica', name: 'Memoria Fotográfica', description: 'Recuerdas con perfecta claridad todo lo que ves o lees.', ph: 2, category: 'Mental' },
     { id: 'empatia-animal', name: 'Empatía Animal', description: 'Puedes comunicarte de forma simple y empática con los animales.', ph: 2, category: 'Social' },
     { id: 'garras-retractiles', name: 'Garras Retráctiles', description: 'Posees garras retráctiles que infligen 1d6-3 de daño y que puedes ocultar a voluntad.', ph: 2, category: 'Combate' },
-    { id: 'vision-oscuridad', name: 'Visión en la Oscuridad', description: 'Puedes ver en la oscuridad total como si hubiera penumbra.', ph: 2, category: 'Mental' },
+    { id: 'vision-oscuridad', name: 'Visión en la Oscuridad', description: 'Puedes ver en la oscuridad total como si hubiera penumbra, pero en blanco y negro.', ph: 2, category: 'Mental' },
     { id: 'afinidad-elemental-menor', name: 'Afinidad Elemental Menor', description: 'Puedes realizar pequeños trucos con un elemento (encender una vela, enfriar una bebida).', ph: 2, category: 'Utilidad' },
     { id: 'resistencia-magica', name: 'Resistencia Mágica', description: 'Tienes ventaja en las salvaciones contra los efectos de Técnicas.', ph: 2, category: 'Utilidad' },
     { id: 'paso-ligero-avanzado', name: 'Paso Ligero Avanzado', description: 'Puedes moverte sobre superficies como nieve profunda o barro sin penalización.', ph: 2, category: 'Movimiento' },
     { id: 'resistencia-aumentada', name: 'Resistencia Aumentada', description: '+5 a tu Resistencia máxima.', ph: 2, category: 'Físico' },
     { id: 'adherencia-mural', name: 'Adherencia Mural', description: 'Puedes trepar superficies verticales difíciles, incluso techos, sin necesidad de tiradas.', ph: 2, category: 'Movimiento' },
     { id: 'feromonas', name: 'Feromonas', description: 'Tienes ventaja en las tiradas sociales para persuadir o atraer a otros.', ph: 2, category: 'Social' },
+    { id: 'ecolocalizacion', name: 'Ecolocalización', description: 'Puedes emitir sonidos inaudibles para "ver" tu entorno en un radio de 10m. Funciona en oscuridad total pero no en silencio mágico.', ph: 2, category: 'Mental' },
+    { id: 'fotosintesis', name: 'Fotosíntesis', description: 'Si pasas al menos 4 horas bajo la luz solar, no necesitas comer ese día.', ph: 2, category: 'Físico' },
+    { id: 'exoesqueleto', name: 'Exoesqueleto', description: 'Tu cuerpo está cubierto de placas quitinosas. Ganas +2 a la Defensa pero no puedes llevar armadura.', ph: 2, category: 'Físico' },
 ];
 
 const TRAITS_MINUS_2: Trait[] = [
@@ -116,9 +116,8 @@ const TRAITS_PLUS_3: Trait[] = [
     { id: 'mente-telepatica', name: 'Mente Telepática', description: 'Puedes comunicarte mentalmente con criaturas a 10 metros.', ph: 3, category: 'Social' },
     { id: 'resistencia-al-dolor', name: 'Resistencia al Dolor', description: 'No sufres penalizaciones por estar por debajo de la mitad de tu Resistencia.', ph: 3, category: 'Físico' },
     { id: 'miembros-elasticos', name: 'Miembros Elásticos', description: 'Puedes estirar tus brazos hasta el doble de su longitud, aumentando tu alcance.', ph: 3, category: 'Movimiento' },
-    { id: 'ecolocalizacion', name: 'Ecolocalización', description: 'Puedes emitir sonidos inaudibles para "ver" tu entorno en un radio de 10m. Funciona en oscuridad total pero no en silencio mágico.', ph: 3, category: 'Mental' },
-    { id: 'fotosintesis', name: 'Fotosíntesis', description: 'Si pasas al menos 4 horas bajo la luz solar, no necesitas comer ese día.', ph: 3, category: 'Físico' },
-    { id: 'exoesqueleto', name: 'Exoesqueleto', description: 'Tu cuerpo está cubierto de placas quitinosas. Ganas +2 a la Defensa pero no puedes llevar armadura.', ph: 3, category: 'Físico' },
+    { id: 'piel-de-piedra', name: 'Piel de Piedra', description: 'Ignoras 1 punto de daño de cualquier fuente.', ph: 3, category: 'Físico' },
+    { id: 'vision-oscuridad-superior', name: 'Visión en la Oscuridad Superior', description: 'Puedes ver en la oscuridad total como si fuera de día, percibiendo todos los colores.', ph: 3, category: 'Mental' },
 ];
 
 const TRAITS_MINUS_3: Trait[] = [
