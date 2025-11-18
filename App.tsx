@@ -1,17 +1,53 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { type Trait, type Herencia } from './types';
 import { ALL_TRAITS, NATURALEZAS } from './constants';
 import TraitLibrary from './components/TraitLibrary';
 import HerenciaBuilder from './components/HerenciaBuilder';
 import Header from './components/Header';
+import GeneratedDescription from './components/GeneratedDescription';
+import { generateHerenciaDescription } from './services/geminiService';
+
+const STORAGE_KEY = 'herenciaCreatorData';
+
+const getInitialState = () => {
+    try {
+        const savedData = localStorage.getItem(STORAGE_KEY);
+        if (savedData) {
+            const parsed = JSON.parse(savedData);
+            return {
+                initialHerencia: parsed.herencia || { name: '', description: '', naturaleza: '' },
+                initialTraits: parsed.selectedTraits || [],
+            };
+        }
+    } catch (error) {
+        console.error("Error al cargar los datos desde Local Storage:", error);
+        localStorage.removeItem(STORAGE_KEY); // Clear corrupted data
+    }
+    return {
+        initialHerencia: { name: '', description: '', naturaleza: '' },
+        initialTraits: [],
+    };
+};
+
 
 const App: React.FC = () => {
-  const [herencia, setHerencia] = useState<Omit<Herencia, 'traits'>>({
-    name: '',
-    description: '',
-    naturaleza: '',
-  });
-  const [selectedTraits, setSelectedTraits] = useState<Trait[]>([]);
+  const { initialHerencia, initialTraits } = getInitialState();
+  const [herencia, setHerencia] = useState<Omit<Herencia, 'traits'>>(initialHerencia);
+  const [selectedTraits, setSelectedTraits] = useState<Trait[]>(initialTraits);
+
+  // State for AI generation
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generatedDescription, setGeneratedDescription] = useState('');
+  const [generationError, setGenerationError] = useState<string | null>(null);
+
+  // Auto-save to Local Storage on change
+  useEffect(() => {
+    const dataToSave = {
+        herencia,
+        selectedTraits,
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+  }, [herencia, selectedTraits]);
 
   const totalPH = useMemo(() => {
     return selectedTraits.reduce((sum, trait) => sum + trait.ph, 0);
@@ -38,7 +74,42 @@ const App: React.FC = () => {
   const resetBuilder = () => {
     setHerencia({ name: '', description: '', naturaleza: '' });
     setSelectedTraits([]);
+    setGeneratedDescription('');
+    setGenerationError(null);
   };
+  
+  const loadFromStorage = useCallback(() => {
+    const { initialHerencia, initialTraits } = getInitialState();
+    setHerencia(initialHerencia);
+    setSelectedTraits(initialTraits);
+    setGeneratedDescription('');
+    setGenerationError(null);
+  }, []);
+
+  const handleGenerateDescription = useCallback(async () => {
+    setIsGenerating(true);
+    setGeneratedDescription('');
+    setGenerationError(null);
+
+    const fullHerencia: Herencia = {
+        ...herencia,
+        traits: selectedTraits,
+    };
+
+    try {
+        const description = await generateHerenciaDescription(fullHerencia);
+        setGeneratedDescription(description);
+    } catch (error) {
+        if (error instanceof Error) {
+            setGenerationError(error.message);
+        } else {
+            setGenerationError("Ocurrió un error desconocido al contactar con la IA.");
+        }
+    } finally {
+        setIsGenerating(false);
+    }
+  }, [herencia, selectedTraits]);
+
 
   return (
     <div className="min-h-screen bg-gray-900 font-sans p-4 sm:p-6 lg:p-8">
@@ -79,15 +150,25 @@ const App: React.FC = () => {
         </div>
 
         <main className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <TraitLibrary allTraits={ALL_TRAITS} onAddTrait={addTrait} />
+          <TraitLibrary allTraits={ALL_TRAITS} onAddTrait={addTrait} selectedTraits={selectedTraits} />
           <HerenciaBuilder
             herencia={herencia}
             selectedTraits={selectedTraits}
             totalPH={totalPH}
             onRemoveTrait={removeTrait}
             onReset={resetBuilder}
+            onGenerateDescription={handleGenerateDescription}
+            onLoadFromStorage={loadFromStorage}
+            isGenerating={isGenerating}
+            generatedDescription={generatedDescription}
           />
         </main>
+        
+        <GeneratedDescription 
+            description={generatedDescription}
+            error={generationError}
+            isGenerating={isGenerating}
+        />
         
       </div>
     </div>

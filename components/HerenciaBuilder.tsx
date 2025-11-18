@@ -7,6 +7,10 @@ interface HerenciaBuilderProps {
   totalPH: number;
   onRemoveTrait: (traitId: string) => void;
   onReset: () => void;
+  onGenerateDescription: () => void;
+  onLoadFromStorage: () => void;
+  isGenerating: boolean;
+  generatedDescription: string;
 }
 
 const HerenciaBuilder: React.FC<HerenciaBuilderProps> = ({
@@ -14,7 +18,11 @@ const HerenciaBuilder: React.FC<HerenciaBuilderProps> = ({
   selectedTraits,
   totalPH,
   onRemoveTrait,
-  onReset
+  onReset,
+  onGenerateDescription,
+  onLoadFromStorage,
+  isGenerating,
+  generatedDescription,
 }) => {
     const validation = useMemo(() => {
         const hasDisadvantage = selectedTraits.some(t => t.ph < 0);
@@ -23,12 +31,12 @@ const HerenciaBuilder: React.FC<HerenciaBuilderProps> = ({
         const isTraitCountValid = traitCount >= 2 && traitCount <= 5;
         
         return {
-            isValid: isBalanced && isTraitCountValid && hasDisadvantage,
+            isValid: isBalanced && isTraitCountValid && hasDisadvantage && !!herencia.name && !!herencia.naturaleza,
             hasDisadvantage,
             isTraitCountValid,
             isBalanced
         };
-    }, [selectedTraits, totalPH]);
+    }, [selectedTraits, totalPH, herencia.name, herencia.naturaleza]);
 
     const handleExport = () => {
         if (!herencia.name || selectedTraits.length === 0) {
@@ -60,6 +68,17 @@ const HerenciaBuilder: React.FC<HerenciaBuilderProps> = ({
         content += `- Desventaja Obligatoria: ${validation.hasDisadvantage ? 'CUMPLIDO' : 'NO CUMPLIDO'}\n\n`;
 
         content += `>> Herencia Válida para Jugar: ${validation.isValid ? 'SÍ' : 'NO'} <<\n`;
+
+        if(generatedDescription) {
+            content += `\n\n==============================\n`;
+            content += ` DESCRIPCIÓN DETALLADA (IA)\n`;
+            content += `==============================\n\n`;
+            const cleanDescription = generatedDescription
+                .replace(/###\s?/g, '')
+                .replace(/##\s?/g, '')
+                .replace(/\*\*/g, '');
+            content += cleanDescription;
+        }
 
         const element = document.createElement("a");
         const file = new Blob([content], {type: 'text/plain;charset=utf-8'});
@@ -114,25 +133,45 @@ const HerenciaBuilder: React.FC<HerenciaBuilderProps> = ({
                 <li className={`transition-colors ${validation.hasDisadvantage ? 'text-green-400' : 'text-red-400'}`}>
                     <strong>Desventaja Obligatoria:</strong> Al menos una.
                 </li>
+                 <li className={`transition-colors ${herencia.name && herencia.naturaleza ? 'text-green-400' : 'text-red-400'}`}>
+                    <strong>Información Básica:</strong> Requiere un nombre y una naturaleza.
+                </li>
             </ul>
         </div>
 
-      <div className="mt-6 flex flex-col sm:flex-row gap-4">
+      <div className="mt-6 space-y-4">
         <button
-            onClick={handleExport}
-            disabled={!herencia.name || selectedTraits.length === 0}
-            className="w-full bg-sky-600 text-white font-bold py-3 px-4 rounded-md hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 disabled:bg-gray-500 disabled:cursor-not-allowed"
+          onClick={onGenerateDescription}
+          disabled={!validation.isValid || isGenerating}
+          className="w-full bg-amber-600 text-white font-bold py-3 px-4 rounded-md hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 disabled:bg-gray-600 disabled:cursor-not-allowed transition-all text-lg"
+          aria-label={!validation.isValid ? "Completa todos los requisitos de construcción para generar con IA" : "Generar descripción con IA"}
+          title={!validation.isValid ? "Completa todos los requisitos de construcción para generar con IA" : "Generar descripción con IA"}
         >
-            Exportar como Texto
+          {isGenerating ? 'Forjando Historia...' : 'Generar Descripción con IA'}
         </button>
-        <button
-            onClick={onReset}
-            className="w-full bg-red-600 text-white font-bold py-3 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
-        >
-            Reiniciar
-        </button>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <button
+                onClick={handleExport}
+                disabled={!herencia.name || selectedTraits.length === 0}
+                className="w-full bg-sky-600 text-white font-bold py-2 px-4 rounded-md hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 disabled:bg-gray-500 disabled:cursor-not-allowed"
+            >
+                Exportar
+            </button>
+            <button
+                onClick={onLoadFromStorage}
+                className="w-full bg-purple-600 text-white font-bold py-2 px-4 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            >
+                Cargar Guardado
+            </button>
+            <button
+                onClick={onReset}
+                className="w-full bg-red-600 text-white font-bold py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+            >
+                Reiniciar
+            </button>
+        </div>
       </div>
-       {!validation.isValid && selectedTraits.length > 0 && <p className="text-xs text-center text-red-400 mt-2">La Herencia no cumple las reglas de construcción.</p>}
+      {!validation.isValid && selectedTraits.length > 0 && <p className="text-xs text-center text-red-400 mt-2">La Herencia aún no cumple las reglas de construcción.</p>}
     </section>
   );
 };

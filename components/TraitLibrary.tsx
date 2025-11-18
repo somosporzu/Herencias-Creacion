@@ -5,6 +5,7 @@ import TraitCard from './TraitCard';
 interface TraitLibraryProps {
   allTraits: Trait[];
   onAddTrait: (trait: Trait) => void;
+  selectedTraits: Trait[];
 }
 
 type PhFilter = 'all' | 'advantages' | 'disadvantages' | 'pm1' | 'pm2' | 'pm3';
@@ -30,21 +31,21 @@ const FilterButton: React.FC<{
   );
 };
 
-const TraitCategory: React.FC<{ title: string; traits: Trait[]; onAddTrait: (trait: Trait) => void; }> = ({ title, traits, onAddTrait }) => {
+const TraitCategory: React.FC<{ title: string; traits: Trait[]; onAddTrait: (trait: Trait) => void; selectedTraits: Trait[] }> = ({ title, traits, onAddTrait, selectedTraits }) => {
     if (traits.length === 0) return null;
     
     return (
         <div>
             <h3 className="text-xl font-bold text-amber-400 mt-6 mb-3 border-b border-gray-600 pb-2">{title}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {traits.map(trait => <TraitCard key={trait.id} trait={trait} onAddTrait={onAddTrait} />)}
+                {traits.map(trait => <TraitCard key={trait.id} trait={trait} onAddTrait={onAddTrait} isAdded={selectedTraits.some(st => st.id === trait.id)} />)}
             </div>
         </div>
     );
 };
 
 
-const TraitLibrary: React.FC<TraitLibraryProps> = ({ allTraits, onAddTrait }) => {
+const TraitLibrary: React.FC<TraitLibraryProps> = ({ allTraits, onAddTrait, selectedTraits }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [phFilter, setPhFilter] = useState<PhFilter>('all');
     const [showCustom, setShowCustom] = useState(false);
@@ -141,6 +142,7 @@ const TraitLibrary: React.FC<TraitLibraryProps> = ({ allTraits, onAddTrait }) =>
                         title={cat.title}
                         traits={filteredTraits.filter(t => t.ph === cat.ph || (Math.abs(cat.ph) === 3 && Math.abs(t.ph) >= 3 && Math.sign(t.ph) === Math.sign(cat.ph)))}
                         onAddTrait={onAddTrait}
+                        selectedTraits={selectedTraits}
                     />
                 ))}
                  {filteredTraits.length === 0 && (
