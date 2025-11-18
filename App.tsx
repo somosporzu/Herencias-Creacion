@@ -12,9 +12,28 @@ const getInitialState = () => {
         const savedData = localStorage.getItem(STORAGE_KEY);
         if (savedData) {
             const parsed = JSON.parse(savedData);
+            
+            // Sanitize traits from localStorage to match the current Trait interface
+            const sanitizedTraits = (parsed.selectedTraits || []).map((trait: any) => {
+                // Ensure only properties from the Trait interface are kept
+                return {
+                    id: trait.id,
+                    name: trait.name,
+                    description: trait.description,
+                    ph: trait.ph,
+                    isCustom: trait.isCustom || undefined,
+                };
+            }).filter((trait: Trait) => 
+                // Basic validation to ensure the trait is usable
+                typeof trait.id === 'string' &&
+                typeof trait.name === 'string' &&
+                typeof trait.description === 'string' &&
+                typeof trait.ph === 'number'
+            );
+
             return {
                 initialHerencia: parsed.herencia || { name: '', description: '', naturaleza: '' },
-                initialTraits: parsed.selectedTraits || [],
+                initialTraits: sanitizedTraits,
             };
         }
     } catch (error) {

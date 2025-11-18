@@ -5,8 +5,6 @@ export interface Trait {
   description: string;
   ph: number;
   isCustom?: boolean;
-  // FIX: Added optional category property to support trait categorization.
-  category?: string;
 }
 
 export interface Herencia {
