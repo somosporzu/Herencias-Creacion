@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { type Trait, type Herencia } from './types';
 import { ALL_TRAITS, NATURALEZAS } from './constants';
@@ -22,6 +23,7 @@ const getInitialState = () => {
                     description: trait.description,
                     ph: trait.ph,
                     isCustom: trait.isCustom || undefined,
+                    category: trait.category || undefined,
                 };
             }).filter((trait: Trait) => 
                 // Basic validation to ensure the trait is usable
