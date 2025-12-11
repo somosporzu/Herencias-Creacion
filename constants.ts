@@ -1,15 +1,16 @@
 import { type Trait } from './types';
 
 export const NATURALEZAS: string[] = [
+    "Alegremente",
     "Apasionadamente",
     "Astutamente",
     "Brutalmente",
     "Caóticamente",
     "Carismáticamente",
     "Cautelosamente",
-    "Con Optimismo",
     "Curiosamente",
     "Despiadadamente",
+    "Discretamente",
     "Elegantemente",
     "Fríamente",
     "Impulsivamente",
@@ -18,6 +19,7 @@ export const NATURALEZAS: string[] = [
     "Rápidamente",
     "Silenciosamente",
     "Siniestramente",
+    "Sutilmente",
     "Tenazmente",
     "Torpemente",
     "Valientemente",
